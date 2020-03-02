@@ -8,4 +8,4 @@ For my work in class
 Some thoughts.
 
 ## Contact
-Created by Ambre Sun - feel free to contact me!
+Created by Sun Rui- feel free to contact me!
