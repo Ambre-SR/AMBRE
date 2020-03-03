@@ -1,0 +1,29 @@
+SQlite安装和配置步骤：
+1. 访问 SQLite的下载页面，从 Windows 区下载预编译的二进制文件
+2. 下载 sqlite-tools-win32-*.zip 和 sqlite-dll-win32-*.zip 压缩文件
+3. 创建文件夹 C:\sqlite，并在此文件夹下解压上面两个压缩文件，得到 sqlite3.def、sqlite3.dll 和 sqlite3.exe 文件。
+4. 添加 C:\sqlite 到 PATH 环境变量，最后在命令提示符下，使用 sqlite3 命令，检验安装
+测试结果：
+创建数据库：使用sqlite3命令，输入.open test.db，创建文件名为test的数据库
+创建数据库表：使用CREATE TABLE语句在test的数据库中创建COMPANY表，如下
+sqlite> CREATE TABLE COMPANY(
+   ...> ID INT PRIMARY  KEY     NOT NULL,
+   ...> NAME                 TEXT    NOT NULL,
+   ...> AGE                     INT     NOT NULL,
+   ...> ADDRESS            CHAR(50),
+   ...> SALARY               REAL
+   ...> );
+并用sqlite命令中的.table命令验证COMPANY表已创建
+添加和查询数据记录：在已创建的COMPANY表中添加数据，输入
+sqlite> INSERT INTO COMPANY(ID,NAME,AGE,ADDRESS,SALARY)
+   ...> VALUES(1,'HARRY',40,'WASHINGTON',1500.00)
+借助select * from table_name;的指令查询输出的这条数据
+
+
+MySQL安装步骤：
+1. 去数据库的官网下载MySQL，下载完毕按照提示开始安装
+2. 进入入MySQL的安装目录下的bin目录，在地址栏中输入cmd进入命令窗口，输入mysql -u root -p后回车，再输入密码进入MySQL的操作管理界面
+测试结果：
+创建数据库：使用MySQLworkbench工具栏上的创建数据库直接创建数据库test
+创建数据库表：在test数据表的Tables上面点击右键，选择Create Table，创建student表
+添加和查询数据记录：输入alter table table_student add age interger;命令语句，创建字段
