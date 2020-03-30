@@ -1,0 +1,120 @@
+1. 常见编译型高级编程语言数据库接口：
+MFC   ODBC类
+MFC   DAO类(数据访问对象)
+
+2. 常见解释型高级编程语言数据库接口：
+Driver接口
+Connection接口
+Statement接口
+
+3. Python编程语言连接数据库的不同方式比较：
+
+1）连接postgresql数据库
+import psycopg2
+# 用来操作数据库的类
+class GPCommand(object):
+    # 类的初始化
+    def __init__(self):
+      self.hostname = '10.1.2.xx'
+      self.username = 'xxx'
+      self.password = 'xxx'
+      self.database = 'xxx'
+    def connectGp(self):
+      try:
+        #链接数据库
+        #读取配置利用connect链接数据库
+        self.connect = psycopg2.connect( host=self.hostname, user=self.username, password=self.password, dbname=self.database )
+        #创建一个新的cursor
+        self.cursor = self.connect.cursor()
+        print("connect gp successful."+'\n' + '数据库连接成功')
+        return ('con_successful')
+      except psycopg2.Error:
+          error = 'Failed to setup Postgres environment.\n{0}'.format(sys.exc_info())
+          print('connect gp error.'+'\n' + '数据库连接失败')
+          return 'con_error'+ error
+
+    def insertTrans(self,trans_name,url_name):
+      	pass
+
+2)连接mysql数据库
+import pymysql
+    class MysqlDB:
+        def __init__(self):
+            self.hostname = '1x.1.2.xx'
+            self.port = 3306
+            self.username = 'xx'
+            self.password = 'xx'
+            self.database = 'xxxx'
+        def connectmysql(self):
+            try:
+                condb = pymysql.connect(host=self.hostname, port=self.port, user=self.username, passwd=self.password, db=self.database)
+                print("链接成功")
+                return  condb
+            except Exception as e:
+                print("连接异常", e)
+            # except Exception:
+            #     info = sys.exc_info()
+            #     print("连接异常", info[1])
+     
+        def insertTable(self):
+        # 获取数据库连接
+        condb = self.connectmysql()
+        # 使用cursor() 方法创建一个游标对象 cursor
+        cursor = condb.cursor()
+        try:
+            # 执行sql语句
+            sql = "select * from cn_customer.bank"
+            cursor.execute(sql)
+            # 提交到数据库执行
+            condb.commit()
+        except Exception:  # 方法一：捕获所有异常
+            # 如果发生异常，则回滚
+            info = sys.exc_info()
+            print("发生异常", info[1])
+            condb.rollback()
+        finally:
+            # 最终关闭数据库连接
+            condb.close()
+
+3)连接sql server
+import pymssql 
+
+class SqlserverDB:
+    def __init__(self):
+        self.hostname = 'xxx.1.2.xxxx'
+        self.username = 'xxxxxx'
+        self.password = 'xxxxx'
+        self.database = 'xxxxx'
+    def connectmysql(self):
+        try:
+            condb = pymssql.connect(host=self.hostname, user=self.username, password=self.password, database=self.database)
+            return  condb
+        except Exception as e:
+            print("连接异常", e)
+
+#获取的table_columns名称，长度等信息
+    def load_columns(self,table_name):
+        # 获取数据库连接
+        condb = self.connectmysql()
+        # 使用cursor() 方法创建一个游标对象 cursor
+        cursor = condb.cursor()
+        fields = []
+        sql = "SELECT c.COLUMN_NAME ,COALESCE(a.ispriamarykey,'N') AS ispriamarykey,case when c.IS_NULLABLE = 'NO' then 'not null' else '' end AS IS_NULLABLE,c.DATA_TYPE,c.CHARACTER_MAXIMUM_LENGTH\
+            FROM    [INFORMATION_SCHEMA].[COLUMNS] c\
+            left join (SELECT name,'Y' AS ispriamarykey  FROM syscolumns WHERE id=Object_Id('%s') and colid IN(SELECT keyno from sysindexkeys WHERE id=Object_Id('%s'))) a \
+            on c.COLUMN_NAME = a.name WHERE   TABLE_NAME = '%s'" % (table_name,table_name,table_name)
+        cursor.execute(sql)
+        table_info = cursor.fetchall()
+        for res in table_info:
+            #print(res)
+            desc = {
+                'column_name': res[0].lower(),
+                'table_name': table_name.lower(),
+                'type': self._convert_type(res[3]).lower(),
+                'length':res[4] ,
+                'primary_key': res[1],
+                'null':res[2]
+            }
+            fields.append(desc)
+        #print(fields)
+        self.postgres_create(fields)
